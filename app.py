@@ -1,30 +1,34 @@
-# This is a flask app that will run the Financial Chatbot in Flask
+# Import necessary libraries
 from flask import Flask, render_template, request, jsonify
-from financialChatbot import FinancialChatbot
+from financialChatbot import FinancialChatbot  # Import your FinancialChatbot class
 import pandas as pd
 
+# Create a Flask web application
 app = Flask(__name__)
 
-# read .csv of questions and answers
+# Read the dataset of financial questions and answers
 filepath = 'financial_questions_answers.csv'
-# questions = data['Question']
-# answers = data['Answer']
+chatbot = FinancialChatbot(filepath)  # Initialize the FinancialChatbot with the dataset
 
-# chatbot
-chatbot = FinancialChatbot(filepath)
-
+# Define a route for the home page
 @app.route('/')
 def index():
+    # Render the index.html template
     return render_template('index.html')
 
+# Define a route for handling user queries
 @app.route('/ask', methods=['POST'])
 def ask():
+    # Retrieve the user's input from the request
     user_input = request.form['messageText']
-    print(user_input)
+    print("User Input:", user_input)
+
+    # Get the chatbot's response based on the user's input
     response = chatbot.get_response(user_input)
-    
-    # return response in JSON format
+
+    # Return the chatbot's response in JSON format
     return jsonify({'answer': response})
 
+# Run the Flask application if this script is executed directly
 if __name__ == '__main__':
     app.run(debug=True)
